@@ -1,0 +1,97 @@
+{% extends "base.html" %}
+{% set show_back_button = false %}
+{% block content %}
+<div class="row justify-content-center mt-5 mb-5">
+  <div class="col-md-9 col-lg-8">
+    <div class="card p-4 border-0 scan-container">
+      <div class="scan-header">
+        <h3>🛡️ Phishing Detection Scanner</h3>
+        <p>Protect yourself from malicious URLs and files</p>
+      </div>
+
+      <!-- URL Scan Section -->
+      <form method="post" action="{{ url_for('check') }}">
+        {{ form.hidden_tag() }}
+        <div class="mb-4">
+          <label class="form-label" style="color: #9ca3af; font-weight: 600; margin-bottom: 10px;">🔗 URL Scanner</label>
+          {{ form.url(class="form-control", placeholder="https://example.com - Enter URL to scan for threats") }}
+        </div>
+        <button class="btn btn-scan w-100" type="submit" name="submit_url">
+          🔍 Scan URL for Threats
+        </button>
+      </form>
+
+      <div class="divider">
+        <span>OR</span>
+      </div>
+
+      <!-- File Scan Section -->
+      <form method="post" action="{{ url_for('scan_file') }}" enctype="multipart/form-data" class="text-center">
+        <label class="form-label" style="color: #9ca3af; font-weight: 600; margin-bottom: 15px; display: block;">📁 File Scanner</label>
+        <label class="scan-btn">
+          📤 Choose File to Scan
+          <input type="file" name="file" hidden onchange="this.form.submit()">
+        </label>
+        <p style="color: #6c757d; font-size: 0.85rem; margin-top: 12px;">Upload any file to check for malware</p>
+      </form>
+
+      <!-- URL Scan Results -->
+      {% if scan %}
+        <div class="result-card">
+          <h5 class="result-title">🔗 URL Scan Results</h5>
+          <div class="result-item">
+            <span class="result-label">Status</span>
+            <span class="badge bg-info">{{ scan.result }}</span>
+          </div>
+          <div class="result-item">
+            <span class="result-label">Security Score</span>
+            <span style="color: #fff; font-weight: 700; font-size: 1.1rem;">{{ scan.score }}</span>
+          </div>
+          {% if scan.reasons %}
+            <div class="result-item" style="flex-direction: column; align-items: flex-start;">
+              <span class="result-label" style="margin-bottom: 10px;">⚠️ Detection Reasons</span>
+              <ul style="color: #d1d5db; margin: 0; padding-left: 20px;">
+                {% for r in scan.reasons %}
+                  <li style="margin: 5px 0;">{{ r }}</li>
+                {% endfor %}
+              </ul>
+            </div>
+          {% endif %}
+        </div>
+      {% endif %}
+
+      <!-- File Scan Results -->
+      {% if scan_file_summary %}
+        <div class="result-card">
+          <h5 class="result-title">📁 File Scan Results</h5>
+          <div class="result-item">
+            <span class="result-label">📄 Filename</span>
+            <span style="color: #fff; font-weight: 600;">{{ scan_file_summary.filename }}</span>
+          </div>
+          <div class="result-item">
+            <span class="result-label">🚨 Malicious</span>
+            <span class="badge bg-danger">{{ scan_file_summary.malicious }}</span>
+          </div>
+          <div class="result-item">
+            <span class="result-label">⚠️ Suspicious</span>
+            <span class="badge bg-warning text-dark">{{ scan_file_summary.suspicious }}</span>
+          </div>
+          <div class="result-item">
+            <span class="result-label">❓ Undetected</span>
+            <span class="badge bg-info">{{ scan_file_summary.undetected }}</span>
+          </div>
+          <div class="result-item">
+            <span class="result-label">✅ Harmless</span>
+            <span class="badge bg-success">{{ scan_file_summary.harmless }}</span>
+          </div>
+          <div style="text-align: center; margin-top: 20px;">
+            <a href="{{ scan_file_summary.vt_link }}" target="_blank" class="btn-report">
+              📊 View Full Report on VirusTotal →
+            </a>
+          </div>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}

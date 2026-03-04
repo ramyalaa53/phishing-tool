@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% set show_back_button = true %}
+{% set back_url = url_for('dashboard') %}
+{% block content %}
+<div class="card p-4 border-0 shadow mt-4">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h4 class="text-info m-0"> Your Full Scan History</h4>
+    <a href="{{ url_for('export_history') }}"
+       class="btn btn-csv btn-sm">
+       ⬇ Export CSV
+    </a>
+  </div>
+
+  <div class="table-responsive">
+    <table class="table table-sm align-middle" style="color:#e2e6ed;">
+      <thead style="background:#2a2e38; color:#4A6CF7;">
+        <tr>
+          <th>#</th>
+          <th>URL</th>
+          <th>Result</th>
+          <th>Score</th>
+          <th>Reasons</th>
+          <th>Time</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for r in rows %}
+        {% set res = r.result.lower() %}
+        {% if 'malicious' in res or 'blacklisted' in res %}
+          {% set color = 'bg-danger' %}
+        {% elif 'suspicious' in res or 'risky' in res %}
+          {% set color = 'bg-warning text-dark' %}
+        {% else %}
+          {% set color = 'bg-success' %}
+        {% endif %}
+        <tr style="background:#252931; border-bottom:1px solid #333;">
+          <td>{{ loop.index }}</td>
+          <td style="color:#00e0ff;">{{ r.url }}</td>
+          <td><span class="badge {{ color }}">{{ r.result }}</span></td>
+          <td style="color:#fff;">{{ r.score }}</td>
+          <td style="color:#ccc;">{{ r.reasons or '—' }}</td>
+          <td style="color:#aaa;">{{ r.created_at.strftime('%Y-%m-%d %H:%M') }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  {% if not rows %}
+  <p class="text-center text-muted mt-3">No history available yet.</p>
+  {% endif %}
+</div>
+{% endblock %}

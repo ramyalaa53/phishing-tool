@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% set show_back_button = true %}
+{% set back_url = url_for('dashboard') %}
+{% block content %}
+<div class="row mt-4">
+  <div class="col-md-8 mb-4">
+    <div class="card p-3 border-0 shadow">
+      <h5 class="text-info mb-3"> Admin - Recent Scans</h5>
+      <div class="table-responsive">
+        <table class="table table-sm align-middle">
+          <thead><tr><th>#</th><th>URL</th><th>User</th><th>Result</th><th>Score</th><th>Time</th></tr></thead>
+          <tbody>
+            {% for r in rows %}
+              {% set res = r.result.lower() %}
+              {% if 'suspicious' in res %}
+                {% set color = 'text-danger' %}
+              {% elif 'risky' in res %}
+                {% set color = 'text-warning' %}
+              {% else %}
+                {% set color = 'text-success' %}
+              {% endif %}
+              <tr>
+                <td>{{ loop.index }}</td>
+                <td>{{ r.url }}</td>
+                <td>{{ r.user_id or 'Anonymous' }}</td>
+                <td class="{{ color }}">{{ r.result }}</td>
+                <td>{{ r.score }}</td>
+                <td>{{ r.created_at.strftime('%Y-%m-%d %H:%M') }}</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="card p-3 mb-3">
+      <h6>Blacklist</h6>
+      <a class="btn btn-sm" href="{{ url_for('blacklist_page') }}">Manage Blacklist</a>
+    </div>
+    <div class="card p-3">
+      <h6>Whitelist</h6>
+      <a class="btn btn-sm" href="{{ url_for('whitelist_page') }}">Manage Whitelist</a>
+    </div>
+  </div>
+</div>
+{% endblock %}
