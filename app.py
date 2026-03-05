@@ -32,7 +32,6 @@ def create_app():
     login_manager = LoginManager()
     login_manager.login_view = 'login'
     login_manager.init_app(app)
-
     with app.app_context():
         db.create_all()
 
@@ -198,7 +197,7 @@ def create_app():
                 flash("Email already registered", "warning")
                 return redirect(url_for('register'))
             user = User(name=form.name.data, email=form.email.data,
-                        password_hash=generate_password_hash(form.password.data))
+                        password_hash = generate_password_hash(form.password.data, method="pbkdf2:sha256")
             db.session.add(user)
             db.session.commit()
             flash("Account created. Login now.", "success")
