@@ -27,9 +27,6 @@ def create_app():
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(base_dir, 'phishing.db')
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
-    if not app.config['SECRET_KEY'] or "replace" in app.config['SECRET_KEY']:
-        raise RuntimeError("SECRET_KEY not configured properly. Set it in .env file.")
-
     db.init_app(app)
     login_manager = LoginManager()
     login_manager.login_view = 'login'
