@@ -196,8 +196,7 @@ def create_app():
             if User.query.filter_by(email=form.email.data).first():
                 flash("Email already registered", "warning")
                 return redirect(url_for('register'))
-            user = User(name=form.name.data, email=form.email.data,
-                        password_hash = generate_password_hash(form.password.data, method="pbkdf2:sha256")
+            user = User(name=form.name.data, email=form.email.data, password_hash=generate_password_hash(form.password.data, method="pbkdf2:sha256"))
             db.session.add(user)
             db.session.commit()
             flash("Account created. Login now.", "success")
