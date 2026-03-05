@@ -1,6 +1,4 @@
 import io
-import pandas as pd
-
 def export_history_to_csv(rows):
     data = []
     for r in rows:
